@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Backtesting Engine</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Financial Chart Plugin -->
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-chart-financial"></script>
+    <!--Data Science-->
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+    <!-- Chart.js + Plugins -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-chart-financial"></script>
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Import Apache ECharts from CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/echarts@6.0/dist/echarts.min.js"></script>
+</head>
+<body class="bg-gray-900 text-gray-100 font-sans flex h-screen overflow-hidden">
+
+    <!-- Header -->
+    <header class="main-header">
+            <!-- Left Side -->
+            <div class="flex items-center space-x-4">
+                <!-- Sidebar Toggle Button -->
+                <button id="sidebar-toggle-btn" class="p-2 rounded-md hover:bg-gray-700 transition-colors duration-200">
+                    <svg class="h-6 w-6 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg>
+                </button>
+                <div class="header-section logo">
+                    <img src="./assets/logo.png" alt="Trading Vibes Logo" onerror="this.onerror=null; this.src='https://placehold.co/24x24/007ACC/FFFFFF?text=TV'">
+                </div>
+                
+                <!--Nav-->
+                
+            </div>
+            
+            
+    </header>
+
+    <!-- Sidebar Icons -->
+    <aside class="icons-sidebar">
+        <div class="icon-group top-icons">
+            <!-- Backtest Builder -->
+            <div class="sidebar-icon active" data-panel="builder" title="Backtest Builder">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="18" height="18" rx="2"></rect>
+                <path d="M7 7h10v10H7z"></path>
+            </svg>
+            </div>
+
+            <!-- Backtesting Metrics -->
+            <div class="sidebar-icon" data-panel="metrics" title="Backtesting Metrics">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M4 20h16M4 14h16M4 8h16"></path>
+            </svg>
+            </div>
+
+            <!-- Trades -->
+            <div class="sidebar-icon" data-panel="trades" title="Trades">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M4 6h16M4 12h16M4 18h16"></path>
+            </svg>
+            </div>
+
+            <!-- Notes -->
+            <div class="sidebar-icon" data-panel="notes" title="Notes">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M4 4h16v16H4z"></path>
+                <path d="M8 4v16"></path>
+            </svg>
+            </div>
+
+            <!-- AI Insight -->
+            <div class="sidebar-icon" data-panel="ai" title="AI Insight">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <path d="M12 6v6l4 2"></path>
+            </svg>
+            </div>
+        </div>
+
+        <div class="icon-group bottom-icons">
+            <!-- Market Data -->
+            <div class="sidebar-icon" data-panel="market" title="Market Data">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M4 17l6-6 4 4 6-6"></path>
+                <path d="M20 17V7h-10"></path>
+            </svg>
+            </div>
+
+            <!-- Profile Avatar -->
+            <div class="sidebar-icon" data-panel="profile" title="Profile">
+            <img src="https://via.placeholder.com/32" class="w-8 h-8 rounded-full border-2 border-gray-500" />
+            </div>
+        </div>
+    </aside>    
+
+    <!--Left Panel-->
+    <div id="leftSidebar" class="left-panel">
+        <!-- Backtest Builder -->
+        <div id="builderContent" class="panel-section active">
+            <div class="flex-shrink-0">
+            <h2 class="text-2xl font-bold mb-6 text-center text-white">Backtest Builder</h2>
+
+            <div class="bg-gray-700 p-4 rounded-xl shadow-lg mb-4 border border-gray-600">
+                <label class="block font-semibold mb-1 text-sm text-gray-300">Strategy Name</label>
+                <input type="text" placeholder="My Breakout Strategy"
+                class="w-full p-2 rounded-lg text-gray-900 bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            </div>
+
+            <div class="bg-gray-700 p-4 rounded-xl shadow-lg mb-4 border border-gray-600">
+                <h3 class="text-xl font-bold text-green-400 mb-2">Entry Conditions</h3>
+                <div id="entry-rules-container" class="space-y-3"></div>
+                <button id="add-entry-group-btn"
+                class="w-full px-4 py-2 mt-3 bg-green-600 text-white rounded-lg font-bold text-sm hover:bg-green-700 transition-colors duration-200">
+                + Add Entry Condition Group (OR)
+                </button>
+            </div>
+
+            <div class="bg-gray-700 p-4 rounded-xl shadow-lg mb-4 border border-gray-600">
+                <h3 class="text-xl font-bold text-red-400 mb-2">Exit Conditions</h3>
+                <div id="exit-rules-container" class="space-y-3"></div>
+                <button id="add-exit-group-btn"
+                class="w-full px-4 py-2 mt-3 bg-red-600 text-white rounded-lg font-bold text-sm hover:bg-red-700 transition-colors duration-200">
+                + Add Exit Condition Group (OR)
+                </button>
+            </div>
+            </div>
+        </div>
+
+        <!-- Backtesting Metrics -->
+        <div id="metricsContent" class="panel-section">
+            <h4 class="text-white font-semibold mb-3">Backtesting Results Summary</h4>
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 text-sm">
+            <div class="metric-item">Total Trades: <span class="font-bold">120</span></div>
+            <div class="metric-item">Win Rate: <span class="font-bold">65%</span></div>
+            <div class="metric-item">Net Profit: <span class="positive font-bold">+$5,342.15</span></div>
+            <div class="metric-item">Profit Factor: <span class="font-bold">5.61</span></div>
+            <div class="metric-item">Max Drawdown: <span class="negative font-bold">-$800.00</span></div>
+            <div class="metric-item">Sharpe Ratio: <span class="font-bold">1.85</span></div>
+            </div>
+        </div>
+
+        <!-- Trades -->
+        <div id="tradesContent" class="panel-section">
+            <h4 class="text-white font-semibold mb-3">Trades</h4>
+            <p class="text-gray-300 text-sm">List of executed trades will appear here...</p>
+        </div>
+
+        <!-- Notes -->
+        <div id="notesContent" class="panel-section">
+            <h4 class="text-white font-semibold mb-3">Notes</h4>
+            <textarea class="w-full p-3 rounded-lg bg-gray-800 text-gray-200 border border-gray-600" rows="8"
+            placeholder="Write your notes here..."></textarea>
+        </div>
+
+        <!-- AI Insight -->
+        <div id="aiContent" class="panel-section">
+            <h4 class="text-white font-semibold mb-3">AI Insight</h4>
+            <p class="text-gray-300 text-sm">AI analysis and insights will be shown here...</p>
+        </div>
+
+        <!-- Market Data -->
+        <div id="marketContent" class="panel-section">
+            <h4 class="text-white font-semibold mb-3">Market Data</h4>
+            <p class="text-gray-300 text-sm">Market data and charts will be displayed here...</p>
+        </div>
+
+        <!-- Profile -->
+        <div id="profileContent" class="panel-section">
+            <h4 class="text-white font-semibold mb-3">Profile</h4>
+            <p class="text-gray-300 text-sm">User profile settings...</p>
+        </div>
+    </div>
+
+   <!-- Main Content Area -->
+   <div id="mainContent" class="main-content">  
+    </div>
+
+    <!-- Main Chart Container -->
+    <div id="mainChartContainer" class="main-chart-container">
+
+        <!--Date & Time-->
+        <div id="DateTime" class="dateTime">
+            <!-- Date Input -->
+            <input 
+                type="date" 
+                id="chartDate" 
+                class="bg-transparent text-white border border-gray-600 rounded px-2 py-1 text-sm">
+
+            <!-- Time Input -->
+            <input 
+                type="time" 
+                id="chartTime" 
+                step="60"  
+                class="bg-transparent text-white border border-gray-600 rounded px-2 py-1 text-sm"/>
+
+            <!-- Go Button -->
+            <button 
+                id="goToDateTime" 
+                class="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded text-sm">
+                Go
+            </button>
+        </div>
+
+        
+
+        <!-- Toolbar -->
+        <div id="chartToolbar" class="chart-tool-bar">
+
+            <!-- Cursor / Crosshair -->
+            <button id="tool-cursor" class="p-2 rounded hover:bg-gray-700 bg-transparent">
+                <i class="fas fa-mouse-pointer text-white"></i>
+            </button>
+            <button id="tool-crosshair" class="p-2 rounded hover:bg-gray-700 bg-transparent">
+                <i class="fas fa-crosshairs text-white"></i>
+            </button>
+
+        </div>
+
+        <div id="chartToolbar2" class="chart-tool-bar2">
+
+            <!--Drawings Dropdown -->
+                <button id="dropdown-drawings-btn" class="p-2 rounded hover:bg-gray-700 bg-transparent">
+                <i class="fas fa-pencil-ruler text-white"></i>
+                </button>
+                <div id="dropdown-drawings" class="absolute hidden mt-2 w-40 bg-gray-800 rounded shadow-lg text-white">
+                <button class="block w-full text-left px-4 py-2 hover:bg-gray-700" id="tool-trendline">Trendline</button>
+                <button class="block w-full text-left px-4 py-2 hover:bg-gray-700" id="tool-hline">Horizontal Line</button>
+                <button class="block w-full text-left px-4 py-2 hover:bg-gray-700" id="tool-vline">Vertical Line</button>
+                <button class="block w-full text-left px-4 py-2 hover:bg-gray-700" id="tool-ray">Ray</button>
+                <button class="block w-full text-left px-4 py-2 hover:bg-gray-700" id="tool-arrow">Arrow</button>
+                </div>
+            
+                <!-- Timeframes Dropdown -->
+            <div class="relative">
+                <button id="dropdown-timeframes-btn" class="p-2 rounded hover:bg-gray-700 bg-transparent">
+                <i class="fas fa-clock text-white"></i>
+                </button>
+                <div id="dropdown-timeframes" class="absolute hidden mt-2 w-32 bg-gray-800 rounded shadow-lg text-white">
+                <button class="block w-full text-left px-4 py-2 hover:bg-gray-700" id="tf-1m">1m</button>
+                <button class="block w-full text-left px-4 py-2 hover:bg-gray-700" id="tf-5m">5m</button>
+                <button class="block w-full text-left px-4 py-2 hover:bg-gray-700" id="tf-15m">15m</button>
+                <button class="block w-full text-left px-4 py-2 hover:bg-gray-700" id="tf-1h">1h</button>
+                <button class="block w-full text-left px-4 py-2 hover:bg-gray-700" id="tf-1d">1D</button>
+                </div>
+            </div>
+
+            <!-- Chart Types Dropdown -->
+            <div class="relative">
+                <button id="dropdown-charttypes-btn" class="p-2 rounded hover:bg-gray-700 bg-transparent">
+                <i class="fas fa-chart-area text-white"></i>
+                </button>
+                <div id="dropdown-charttypes" class="absolute hidden mt-2 w-40 bg-gray-800 rounded shadow-lg text-white">
+                <button class="block w-full text-left px-4 py-2 hover:bg-gray-700" id="chart-candles">Candlesticks</button>
+                <button class="block w-full text-left px-4 py-2 hover:bg-gray-700" id="chart-bars">Bars</button>
+                <button class="block w-full text-left px-4 py-2 hover:bg-gray-700" id="chart-line">Line</button>
+                <button class="block w-full text-left px-4 py-2 hover:bg-gray-700" id="chart-heikin">Heikin Ashi</button>
+                <button class="block w-full text-left px-4 py-2 hover:bg-gray-700" id="chart-hollow">Hollow Candles</button>
+                </div>
+            </div>
+
+        </div>
+
+        <div id="chartToolbar3" class="chart-tool-bar3">
+            <!-- Screenshot / Settings -->
+            <button id="tool-screenshot" class="p-2 rounded hover:bg-gray-700 bg-transparent">
+                <i class="fas fa-camera text-white"></i>
+            </button>
+            <button id="tool-settings" class="p-2 rounded hover:bg-gray-700 bg-transparent">
+                <i class="fas fa-cog text-white"></i>
+            </button>
+            
+                <!-- Indicators Dropdown -->
+            <div class="relative">
+                <button id="dropdown-indicators-btn" class="p-2 rounded hover:bg-gray-700 bg-transparent">
+                <i class="fas fa-chart-line text-white"></i>
+                </button>
+                <div id="dropdown-indicators" class="absolute hidden mt-2 w-48 bg-gray-800 rounded shadow-lg text-white">
+                <button class="block w-full text-left px-4 py-2 hover:bg-gray-700" id="indicator-rsi">RSI</button>
+                <button class="block w-full text-left px-4 py-2 hover:bg-gray-700" id="indicator-macd">MACD</button>
+                <button class="block w-full text-left px-4 py-2 hover:bg-gray-700" id="indicator-ema">EMA</button>
+                <button class="block w-full text-left px-4 py-2 hover:bg-gray-700" id="indicator-sma">SMA</button>
+                <button class="block w-full text-left px-4 py-2 hover:bg-gray-700" id="indicator-bbands">Bollinger Bands</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="chart-10" class="chart-full">
+        </div>
+       </div>
+    </div>
+   
+    </div>
+
+    <!-- Modal for Backtest Config -->
+    <!-- backtest-config-modal.html -->
+    <div id="backtestConfigModal" class="modal hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+  <div class="modal-content bg-gray-800 rounded-lg p-6 w-80 max-h-[80vh] overflow-y-auto scrollbar-hide text-white border border-white/30">
+    <h2 class="text-xl font-bold mb-4">Backtest Configuration</h2>
+
+    <form id="backtestConfigForm" class="space-y-6">
+
+      <!-- Trade Settings Section -->
+      <div class="space-y-4">
+        <h3 class="text-lg font-semibold mb-2 border-b border-gray-600 pb-1">Trade Settings</h3>
+        <div>
+          <label for="tradeType" class="block mb-1">Trade Type</label>
+          <select id="tradeType" name="tradeType" class="w-full rounded p-2 bg-gray-700 text-white">
+            <option value="buy">Buy</option>
+            <option value="sell">Sell</option>
+          </select>
+        </div>
+        <div>
+          <label for="amountPerTrade" class="block mb-1">Amount per Trade</label>
+          <input type="number" id="amountPerTrade" name="amountPerTrade" class="w-full rounded p-2 bg-gray-700 text-white" min="0" step="0.01" required />
+        </div>
+        <div>
+          <label for="accountBalance" class="block mb-1">Account Balance</label>
+          <input type="number" id="accountBalance" name="accountBalance" class="w-full rounded p-2 bg-gray-700 text-white" min="0" step="0.01" required />
+        </div>
+      </div>
+
+      <!-- Risk Management Section -->
+      <div class="space-y-4">
+        <h3 class="text-lg font-semibold mb-2 border-b border-gray-600 pb-1">Risk Management</h3>
+        <div>
+          <label for="slippage" class="block mb-1">Slippage (points)</label>
+          <input type="number" id="slippage" name="slippage" class="w-full rounded p-2 bg-gray-700 text-white" min="0" step="0.01" required />
+        </div>
+        <div>
+          <label for="stopLoss" class="block mb-1">Stop-Loss (pips)</label>
+          <input type="number" id="stopLoss" name="stopLoss" class="w-full rounded p-2 bg-gray-700 text-white" min="0" step="0.1" required />
+        </div>
+        <div>
+          <label for="takeProfit" class="block mb-1">Take-Profit (pips)</label>
+          <input type="number" id="takeProfit" name="takeProfit" class="w-full rounded p-2 bg-gray-700 text-white" min="0" step="0.1" required />
+        </div>
+      </div>
+
+      <!-- Backtest Period Section -->
+      <div class="space-y-4">
+        <h3 class="text-lg font-semibold mb-2 border-b border-gray-600 pb-1">Backtest Period</h3>
+        <div>
+          <label for="startDate" class="block mb-1">Start Date</label>
+          <input type="date" id="startDate" name="startDate" class="w-full rounded p-2 bg-gray-700 text-white" required />
+        </div>
+        <div>
+          <label for="endDate" class="block mb-1">End Date</label>
+          <input type="date" id="endDate" name="endDate" class="w-full rounded p-2 bg-gray-700 text-white" required />
+        </div>
+      </div>
+
+      <!-- Buttons -->
+    <div class="flex justify-center space-x-4 pt-4">
+        <button type="button" id="cancelBacktestConfig" class="bg-gray-600 px-4 py-2 rounded hover:bg-gray-700">Cancel</button>
+        <button type="submit" class="bg-blue-600 px-4 py-2 rounded hover:bg-blue-700 font-bold">Run Backtest</button>
+    </div>
+
+
+    </form>
+  </div>
+    </div>
+
+    <!-- Custom JavaScript -->
+    <script src="script.js"></script>
+    <script src="js/compilerLogic.js"></script>
+    <script src="js/backtestConfig.js"></script>
+    <script src="js/conditionsBlock.js"></script>
+    <script src="js/checkObject.js"></script>
+    <script src="js/header.js"></script>
+    <script src="js/candleStickChart.js"></script> 
+    <script src="js/runBacktestInIframe.js"></script>
+    <script src="js/conditionsReader.js"></script>
+    <script src="js/leftPanelSwitcher.js"></script>
+    <script src="js/chartResize.js"></script>
+    <script src="js/chartTools.js"></script>
+    <script src="js/datetime-navigator.js"></script>
+
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        lucide.createIcons();
+    </script>
+
+</body>
+</html>

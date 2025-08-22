@@ -1,0 +1,417 @@
+:root {
+    --header-bg: #1e1e2f;
+    --sidebar-bg: #1e1e2f;
+    --panel-bg: #28283c;
+    --editor-bg: #323246;
+    --text-color: #d1d5db;
+    --hover-bg: #4b5563;
+    --border-color: #4b5563;
+    --accent-color: #3b82f6;
+}
+
+body {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+body::-webkit-scrollbar {
+    display: none;
+}
+
+.positive { color: #10B981; }
+.negative { color: #EF4444; }
+
+/* Header Styling */
+.main-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 2.5rem;
+    background-color: var(--header-bg);
+    color: var(--text-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    z-index: 50;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.header-section {
+    display: flex;
+    align-items: center;
+}
+
+.header-section.logo img {
+    height: 1rem;          /* fixed typo */
+    margin-left: 10px;     /* move right to align with sidebar width + gap */
+}
+
+@media (min-width: 640px) {
+    .header-section.logo img {
+        height: 2.8rem;
+    }
+}
+
+/* Sidebar Styling */
+#sidebar.hidden {
+    transform: translateX(-100%);
+    width: 0;
+    padding: 0;
+    opacity: 0;
+}
+
+/* Editor Panel */
+.editor-panel {
+    padding-top: 2.5rem;
+}
+
+/* Chart Tabs */
+.chart-tabs-container {
+    display: flex;
+    border-bottom: 1px solid var(--border-color);
+    background-color: var(--sidebar-bg);
+    min-height: 2.5rem;
+}
+.chart-tab {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    cursor: pointer;
+    border-right: 1px solid var(--border-color);
+    transition: background-color 200ms;
+    color: var(--text-color);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.chart-tab:hover {
+    background-color: var(--hover-bg);
+}
+.chart-tab.active {
+    background-color: var(--editor-bg);
+    color: #FFFFFF;
+    border-bottom: 2px solid var(--accent-color);
+    margin-bottom: -1px;
+}
+.chart-tab .close-tab-btn {
+    background: none;
+    border: none;
+    color: var(--text-color);
+    cursor: pointer;
+    font-size: 1rem;
+    padding: 0;
+    line-height: 1;
+}
+.chart-tab .close-tab-btn:hover {
+    color: #F44336;
+}
+
+/* Main Chart Container */
+.chart-container {
+    background-color: var(--editor-bg);
+}
+
+main.editor-panel {
+  height: 100vh; /* full viewport height or parent height */
+  display: flex;
+  flex-direction: column;
+}
+
+#mainChartContainer {
+  flex: 1 1 auto; /* allow flex grow/shrink but will be overridden by JS */
+  overflow: hidden;
+  transition: height 0.25s ease;
+}
+
+
+.modal.hidden {
+    display: none;
+}
+
+/* Hide scrollbar but allow scrolling */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;     /* Firefox */
+}
+
+/* Hide scrollbar by default */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.3);
+  border-radius: 4px;
+  transition: background-color 0.3s;
+}
+
+/* Show scrollbar on hover */
+.custom-scrollbar:hover::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.6);
+}
+
+/* For Firefox */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+}
+
+.custom-scrollbar:hover {
+  scrollbar-color: rgba(255, 255, 255, 0.6) transparent;
+}
+
+.icon-5 { width: 1.25rem; height: 1.25rem; }
+
+/* New sidebar */
+
+.icons-sidebar {
+  width: 3rem;
+  background: #1f2937;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.icon-group {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: .5rem 0;
+}
+
+.sidebar-icon {
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  padding: .5rem;
+  color: #9ca3af;
+  transition: all .2s;
+}
+
+.sidebar-icon:hover,
+.sidebar-icon.active {
+  color: #fff;
+  background: #374151;
+  border-radius: .5rem;
+}
+
+.left-panel {
+  width: 22rem;
+  background: #111827;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.panel-section {
+  display: none;
+  padding: 1rem;
+}
+
+.panel-section.active {
+  display: block;
+}
+
+/* Move down the top icons */
+.icon-group.top-icons {
+  margin-top: 50px; /* adjust this number until the first icon clears the header */
+}
+
+/* Move down the Backtest Builder title */
+#builderContent {
+  padding-top: 55px; /* adjust so the h2 is fully visible */
+}
+
+/* Toggle Sidebar */
+#leftSidebar {
+  transition: all 0.3s ease;
+}
+.hidden {
+  display: none;
+}
+
+
+/* Animation Effects */
+.left-panel {
+  width: 280px; /* your sidebar width */
+  transition: transform 0.3s ease;
+  
+}
+
+.left-panel.collapsed {
+  width: 60px;
+}
+
+
+#mainContent {
+  display: flex;
+  flex-direction: column;
+  flex: 1;                   /* fill remaining space next to sidebar */
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+
+#mainContent.expanded {
+  margin-left: 0;
+  width: 100%;
+}
+
+/* Chart Resize */
+.chart-container {
+  flex: 1;                 /* fill remaining vertical space */
+  width: 100%;             /* full width of parent */
+  overflow: hidden;
+  position: relative;
+}
+
+#chart-10 {
+  height: 100%;
+  width: 100%;             /* make chart take full container width */
+}
+
+/* Make the chart fill the entire container */
+/* Container fills available flex space and resizes smoothly */
+.main-chart-container {
+  position: relative;
+  display: flex;
+  width: 100%;               /* fill parent width */
+  flex: 1;                   /* fill parent height */
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.chart-full {
+  position: relative;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  transition: all 0.3s ease;
+}
+
+
+.main-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;               /* Fill remaining space next to sidebar */
+  height: 100vh;         /* Full viewport height */
+  width: auto;           /* Flexible width based on sidebar */
+  overflow: hidden;      /* Prevent scrollbars */
+  transition: all 0.3s ease; /* Smooth resizing when sidebar toggles */
+}
+
+/* ToolSet 1*/
+.chart-tool-bar {
+  position: absolute;
+  top: 40px;               /* slight gap from top */
+  left: 43%;               /* push to middle */
+  transform: translateX(-50%); /* center horizontally */
+  background: rgba(0, 0, 0, 0.5); /* black 50% transparent */
+  display: flex;
+  gap: 8px;                /* space between icons */
+  padding: 6px 10px;
+  border-radius: 8px;
+  z-index: 10;             /* make sure it stays above chart */
+}
+
+.chart-tool-bar button {
+  color: white;
+  font-size: 16px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.chart-tool-bar button:hover {
+  background: rgba(255, 255, 255, 0.2); /* subtle hover */
+  border-radius: 6px;
+}
+
+/* ToolSet 2*/
+.chart-tool-bar2 {
+  position: absolute;
+  top: 40px;               /* slight gap from top */
+  left: 55%;               /* push to middle */
+  transform: translateX(-50%); /* center horizontally */
+  background: rgba(0, 0, 0, 0.5); /* black 50% transparent */
+  display: flex;
+  gap: 8px;                /* space between icons */
+  padding: 6px 10px;
+  border-radius: 8px;
+  z-index: 10;             /* make sure it stays above chart */
+}
+
+.chart-tool-bar2 button {
+  color: white;
+  font-size: 16px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.chart-tool-bar2 button:hover {
+  background: rgba(255, 255, 255, 0.2); /* subtle hover */
+  border-radius: 6px;
+}
+
+/* ToolSet 3*/
+.chart-tool-bar3 {
+  position: absolute;
+  top: 40px;               /* slight gap from top */
+  left: 69%;               /* push to middle */
+  transform: translateX(-50%); /* center horizontally */
+  background: rgba(0, 0, 0, 0.5); /* black 50% transparent */
+  display: flex;
+  gap: 8px;                /* space between icons */
+  padding: 6px 10px;
+  border-radius: 8px;
+  z-index: 10;             /* make sure it stays above chart */
+}
+
+.chart-tool-bar3 button {
+  color: white;
+  font-size: 16px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.chart-tool-bar3 button:hover {
+  background: rgba(255, 255, 255, 0.2); /* subtle hover */
+  border-radius: 6px;
+}
+
+
+/* Date Time*/
+.dateTime {
+  position: absolute;
+  top: 47px;               /* slight gap from top */
+  left: 17%;               /* push to middle */
+  transform: translateX(-50%); /* center horizontally */
+  background: rgba(0, 0, 0, 0.5); /* black 50% transparent */
+  display: flex;
+  gap: 8px;                /* space between icons */
+  padding: 6px 10px;
+  border-radius: 8px;
+  z-index: 10;             /* make sure it stays above chart */
+}
+
+.dateTime button {
+  color: white;
+  font-size: 16px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.dateTime button:hover {
+  background: rgba(255, 255, 255, 0.2); /* subtle hover */
+  border-radius: 6px;
+}
